@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Laboratório</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f2f2f2;
+      font-family: 'Segoe UI', sans-serif;
+      color: #004775;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 5px;
+      height: 100vh;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    .box {
+      border-radius: 10px;
+      background-color: #3d3d3d;
+      padding: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      color: #ffffff;
+    }
+    h2 {
+      font-size: 16px;
+      margin: 0 0 10px;
+      color: #ffffff;
+    }
+    iframe {
+      width: 100%;
+      border: none;
+    }
+    ul {
+      padding-left: 16px;
+      margin: 0;
+    }
+    .rss-box {
+      overflow-y: auto;
+      flex: 1;
+    }
+    .rss-box iframe {
+      height: 100%;
+    }
+    .map-container {
+      position: relative;
+      flex: 1;
+    }
+    .map-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid">
+    <div class="box">
+      <h2>Notícias de Astronomia</h2>
+      <div class="rss-box">
+        <iframe src="https://www.universetoday.com/" title="Universe Today"></iframe>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Mapa - Atividades do Lab</h2>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/d/u/0/embed?mid=18_Z1T-A334rSooZI3UfR0pPbtCEx7Ag&ehbc=2E312F"></iframe>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Curva de Luz</h2>
+      <canvas id="chartCanvas"></canvas>
+    </div>
+    <div class="box">
+      <h2>Tarefas do Laboratório</h2>
+      <ul>
+        <li>WORKSHOP ✅</li>
+        <li>SAB RESUMOS 10/06</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('chartCanvas').getContext('2d');
+    const labels = Array.from({length: 50}, (_, i) => i);
+    const data = labels.map(x => 10 + Math.sin(x * 0.2) * 2 + Math.random());
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Curva de luz simulada',
+          data,
+          borderColor: '#ffffff',
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          tension: 0.4,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        animation: false,
+        scales: {
+          x: { display: false },
+          y: { display: false }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    setInterval(() => {
+      chart.data.labels.push(chart.data.labels.length);
+      chart.data.labels.shift();
+      const next = 10 + Math.sin(chart.data.labels.length * 0.2) * 2 + Math.random();
+      chart.data.datasets[0].data.push(next);
+      chart.data.datasets[0].data.shift();
+      chart.update();
+    }, 1000);
+  </script>
+</body>
+</html>
